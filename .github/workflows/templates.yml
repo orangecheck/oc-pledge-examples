@@ -1,0 +1,40 @@
+name: Templates
+
+# Each template as a fork gets it: installed from its own lockfile on Node 22,
+# type-checked, and its tests run. live.yml does the same every week against
+# the latest published packages.
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: templates-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    template:
+        name: ${{ matrix.template }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        strategy:
+            fail-fast: false
+            matrix:
+                template:
+                    - node-verify
+        defaults:
+            run:
+                working-directory: ${{ matrix.template }}
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: '22'
+            - run: yarn install --frozen-lockfile --non-interactive
+            - run: yarn build
+            - run: yarn test

@@ -1,0 +1,121 @@
+name: Live
+
+# Weekly. Each template installed with its lockfile removed, so it gets the
+# latest published packages its ranges allow, on current Node: type-checked and
+# tested.
+# Then the committed pledge: verified offline, its fixed states checked against
+# the committed headers, those headers compared with mempool.space's, and its
+# state resolved at the current tip from mempool.space. A copy with one
+# signature byte changed must fail. No secrets, and nothing is published.
+# GitHub turns a schedule off after 60 days without a commit to the repo; turn
+# it back on under Actions, Live, Enable workflow.
+
+on:
+    schedule:
+        - cron: '37 7 * * 1'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: live
+    cancel-in-progress: false
+
+jobs:
+    template:
+        name: ${{ matrix.template }} on latest
+        if: github.repository == 'orangecheck/oc-pledge-examples'
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        strategy:
+            fail-fast: false
+            matrix:
+                template:
+                    - node-verify
+        defaults:
+            run:
+                working-directory: ${{ matrix.template }}
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: '24'
+            # yarn list reads yarn.lock, so the install writes a fresh one rather than skip it.
+            - run: rm yarn.lock && yarn install --non-interactive
+            - name: The orangecheck versions this run resolved
+              run: yarn -s list --pattern '@orangecheck' --depth=0
+            - run: yarn build
+            - run: yarn test
+
+    committed-pledge:
+        name: The committed pledge, verified offline and resolved at the tip
+        if: github.repository == 'orangecheck/oc-pledge-examples'
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        defaults:
+            run:
+                working-directory: node-verify
+        env:
+            PLEDGE: pledges/6b16764e210c766086f5dc0be7dca2727a56ddc6c92a6377e5c01b1653e5910e.pledge
+            ID: 6b16764e210c766086f5dc0be7dca2727a56ddc6c92a6377e5c01b1653e5910e
+            BLOCK: '920000'
+            API: https://mempool.space/api
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: '24'
+            - run: rm yarn.lock && yarn install --non-interactive
+            - run: yarn -s list --pattern '@orangecheck' --depth=0
+            - name: A copy with one signature byte changed
+              run: |
+                  node -e '
+                      const fs = require("fs");
+                      const env = JSON.parse(fs.readFileSync(process.env.PLEDGE, "utf8"));
+                      const sig = Buffer.from(env.sig.value, "base64");
+                      sig[10] ^= 1;
+                      env.sig.value = sig.toString("base64");
+                      fs.writeFileSync(process.env.RUNNER_TEMP + "/tampered.pledge", JSON.stringify(env));
+                  '
+            - name: Verified offline
+              run: |
+                  yarn -s verify "$PLEDGE" > "$RUNNER_TEMP/verify.json"
+                  cat "$RUNNER_TEMP/verify.json"
+                  jq -e --arg id "$ID" '.ok and .id == $id' "$RUNNER_TEMP/verify.json" > /dev/null
+                  set +e
+                  yarn -s verify "$RUNNER_TEMP/tampered.pledge" > "$RUNNER_TEMP/verify-tampered.json"
+                  code=$?
+                  set -e
+                  cat "$RUNNER_TEMP/verify-tampered.json"
+                  test "$code" = 2
+                  jq -e '.code == "E_PLEDGE_BAD_SIG"' "$RUNNER_TEMP/verify-tampered.json" > /dev/null
+            - name: The fixed states, against the committed headers
+              run: yarn -s state "$PLEDGE" --headers headers --check states.json
+            - name: The committed headers are the chain's blocks
+              run: |
+                  for h in 919000 920000; do
+                      hash=$(curl -sSf --retry 3 "$API/block-height/$h")
+                      curl -sSf --retry 3 "$API/block/$hash/header" > "$RUNNER_TEMP/$h.hex"
+                      diff <(tr -d '\n' < "headers/$h.hex") <(tr -d '\n' < "$RUNNER_TEMP/$h.hex")
+                  done
+            - name: The state at the current tip, from mempool.space
+              run: |
+                  mkdir -p "$RUNNER_TEMP/tip"
+                  hash=$(curl -sSf --retry 3 "$API/blocks/tip/hash")
+                  tip=$(curl -sSf --retry 3 "$API/block/$hash" | jq -er .height)
+                  curl -sSf --retry 3 "$API/block/$hash/header" > "$RUNNER_TEMP/tip/$tip.hex"
+                  cp "$RUNNER_TEMP/$BLOCK.hex" "$RUNNER_TEMP/tip/$BLOCK.hex"
+                  yarn -s state "$PLEDGE" --headers "$RUNNER_TEMP/tip" --height "$tip" > "$RUNNER_TEMP/tip.json"
+                  cat "$RUNNER_TEMP/tip.json"
+                  # Block 920000 is mined, so the pledge is resolvable until expires_at and expired_unresolved after.
+                  jq -e --argjson tip "$tip" --argjson block "$BLOCK" '
+                      .ok and .height == $tip and $tip >= $block
+                      and .state == (if .now < .expires_at then "resolvable" else "expired_unresolved" end)
+                  ' "$RUNNER_TEMP/tip.json" > /dev/null
+                  set +e
+                  yarn -s state "$RUNNER_TEMP/tampered.pledge" --headers "$RUNNER_TEMP/tip" --height "$tip" > "$RUNNER_TEMP/tip-tampered.json"
+                  code=$?
+                  set -e
+                  cat "$RUNNER_TEMP/tip-tampered.json"
+                  test "$code" = 2
