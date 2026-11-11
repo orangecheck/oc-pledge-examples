@@ -1,0 +1,38 @@
+{
+  "description": "state machine — past expires_at with no consistent outcome → expired_unresolved",
+  "kind": "state-transition",
+  "inputs": {
+    "pledge_id": "38a096c336069cab04dc8beb78b875c42de6dd6a27f06f7ea22bfa58e8da81e7",
+    "pledge": {
+      "swearer": "bc1qcarol000000000000000000000000000000000",
+      "proposition": "I will deliver service-level uptime of at least 99.9 percent to bc1qcounter0000000000000000000000000000000 during the window 2026-05-01 to 2026-06-01.",
+      "resolution": {
+        "mechanism": "counterparty_signs",
+        "query": "counterparty(bc1qcounter0000000000000000000000000000000) signs outcome over pledge_id"
+      },
+      "resolves_at": {
+        "time": "2026-06-01T00:00:00Z"
+      },
+      "expires_at": "2026-06-15T00:00:00Z",
+      "bond": {
+        "attestation_id": "3333333333333333333333333333333333333333333333333333333333333333",
+        "min_sats": 2500000,
+        "min_days": 365
+      },
+      "counterparty": "bc1qcounter0000000000000000000000000000000",
+      "dispute": {
+        "mechanism": "vote_resolves",
+        "params": "poll_id=11111111111111111111111111111111;option=kept;threshold=0.5"
+      },
+      "remediation": "breach_recorded",
+      "sworn_at": "2026-04-20T09:00:00Z",
+      "nonce": "fedcba9876543210fedcba9876543210"
+    },
+    "outcome_envelope": null,
+    "abandonment_envelope": null,
+    "now": "2026-06-16T00:00:00Z"
+  },
+  "expected": {
+    "state": "expired_unresolved"
+  }
+}

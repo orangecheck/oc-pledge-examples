@@ -1,0 +1,78 @@
+{
+  "description": "v01's pledge sworn by a P2WPKH address: a BIP-322 simple signature over the hex pledge id, from a disclosed burn key; MUST verify",
+  "kind": "pledge",
+  "inputs": {
+    "swearer": "bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw",
+    "proposition": "I will not spend the bonded UTXO before block 920000.",
+    "resolution": {
+      "mechanism": "chain_state",
+      "query": "address(bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw).utxo_count >= 1 AND address(bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw).balance >= 500000"
+    },
+    "resolves_at": {
+      "block": 920000
+    },
+    "expires_at": "2026-12-31T00:00:00Z",
+    "bond": {
+      "attestation_id": "1111111111111111111111111111111111111111111111111111111111111111",
+      "min_sats": 500000,
+      "min_days": 180
+    },
+    "counterparty": null,
+    "dispute": {
+      "mechanism": null,
+      "params": null
+    },
+    "remediation": "breach_recorded",
+    "sworn_at": "2026-04-24T18:30:00Z",
+    "nonce": "0123456789abcdef0123456789abcdef"
+  },
+  "expected": {
+    "canonical_message": "oc-pledge/v1\nswearer: bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw\nproposition: I will not spend the bonded UTXO before block 920000.\nresolution:\n  mechanism: chain_state\n  query: address(bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw).utxo_count >= 1 AND address(bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw).balance >= 500000\nresolves_at:\n  block: 920000\nexpires_at: 2026-12-31T00:00:00Z\nbond:\n  attestation_id: 1111111111111111111111111111111111111111111111111111111111111111\n  min_sats: 500000\n  min_days: 180\ncounterparty: null\ndispute:\n  mechanism: null\n  params: null\nremediation: breach_recorded\nsworn_at: 2026-04-24T18:30:00Z\nnonce: 0123456789abcdef0123456789abcdef",
+    "canonical_message_bytes_len": 666,
+    "pledge_id": "6b16764e210c766086f5dc0be7dca2727a56ddc6c92a6377e5c01b1653e5910e",
+    "envelope": {
+      "v": 1,
+      "kind": "pledge",
+      "id": "6b16764e210c766086f5dc0be7dca2727a56ddc6c92a6377e5c01b1653e5910e",
+      "swearer": {
+        "address": "bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw",
+        "alg": "bip322"
+      },
+      "proposition": "I will not spend the bonded UTXO before block 920000.",
+      "resolution": {
+        "mechanism": "chain_state",
+        "query": "address(bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw).utxo_count >= 1 AND address(bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw).balance >= 500000"
+      },
+      "resolves_at": {
+        "block": 920000
+      },
+      "expires_at": "2026-12-31T00:00:00Z",
+      "bond": {
+        "attestation_id": "1111111111111111111111111111111111111111111111111111111111111111",
+        "min_sats": 500000,
+        "min_days": 180
+      },
+      "counterparty": null,
+      "dispute": {
+        "mechanism": null,
+        "params": null
+      },
+      "remediation": "breach_recorded",
+      "sworn_at": "2026-04-24T18:30:00Z",
+      "nonce": "0123456789abcdef0123456789abcdef",
+      "sig": {
+        "alg": "bip322",
+        "pubkey": "bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw",
+        "value": "AkcwRAIgNaFVfIQ72F4z8kiiq+P2+62Jh9dq/QYqYUqK6yDiPHsCIFxgjhxy74hUuZ1hnYZpEtJ+9I0jAM0gTqNQU9xyA4kzASEDG4TFVnsSZECZXT7VqroFZdceGDRgSBn/nBf16dXdB48="
+      }
+    }
+  },
+  "signature_check": {
+    "address_type": "p2wpkh",
+    "format": "bip322-simple",
+    "signed_message": "6b16764e210c766086f5dc0be7dca2727a56ddc6c92a6377e5c01b1653e5910e",
+    "expected": {
+      "outcome": "ACCEPT"
+    }
+  }
+}

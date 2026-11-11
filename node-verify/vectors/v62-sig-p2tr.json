@@ -1,0 +1,78 @@
+{
+  "description": "v01's pledge sworn by a P2TR address (key path): a BIP-322 simple signature over the hex pledge id, from a disclosed burn key; MUST verify",
+  "kind": "pledge",
+  "inputs": {
+    "swearer": "bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p",
+    "proposition": "I will not spend the bonded UTXO before block 920000.",
+    "resolution": {
+      "mechanism": "chain_state",
+      "query": "address(bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p).utxo_count >= 1 AND address(bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p).balance >= 500000"
+    },
+    "resolves_at": {
+      "block": 920000
+    },
+    "expires_at": "2026-12-31T00:00:00Z",
+    "bond": {
+      "attestation_id": "1111111111111111111111111111111111111111111111111111111111111111",
+      "min_sats": 500000,
+      "min_days": 180
+    },
+    "counterparty": null,
+    "dispute": {
+      "mechanism": null,
+      "params": null
+    },
+    "remediation": "breach_recorded",
+    "sworn_at": "2026-04-24T18:30:00Z",
+    "nonce": "0123456789abcdef0123456789abcdef"
+  },
+  "expected": {
+    "canonical_message": "oc-pledge/v1\nswearer: bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p\nproposition: I will not spend the bonded UTXO before block 920000.\nresolution:\n  mechanism: chain_state\n  query: address(bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p).utxo_count >= 1 AND address(bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p).balance >= 500000\nresolves_at:\n  block: 920000\nexpires_at: 2026-12-31T00:00:00Z\nbond:\n  attestation_id: 1111111111111111111111111111111111111111111111111111111111111111\n  min_sats: 500000\n  min_days: 180\ncounterparty: null\ndispute:\n  mechanism: null\n  params: null\nremediation: breach_recorded\nsworn_at: 2026-04-24T18:30:00Z\nnonce: 0123456789abcdef0123456789abcdef",
+    "canonical_message_bytes_len": 726,
+    "pledge_id": "477e7ede7d22fc99131e40b0ed6699cda40efb14d7aac77b331ffcd725607eec",
+    "envelope": {
+      "v": 1,
+      "kind": "pledge",
+      "id": "477e7ede7d22fc99131e40b0ed6699cda40efb14d7aac77b331ffcd725607eec",
+      "swearer": {
+        "address": "bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p",
+        "alg": "bip322"
+      },
+      "proposition": "I will not spend the bonded UTXO before block 920000.",
+      "resolution": {
+        "mechanism": "chain_state",
+        "query": "address(bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p).utxo_count >= 1 AND address(bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p).balance >= 500000"
+      },
+      "resolves_at": {
+        "block": 920000
+      },
+      "expires_at": "2026-12-31T00:00:00Z",
+      "bond": {
+        "attestation_id": "1111111111111111111111111111111111111111111111111111111111111111",
+        "min_sats": 500000,
+        "min_days": 180
+      },
+      "counterparty": null,
+      "dispute": {
+        "mechanism": null,
+        "params": null
+      },
+      "remediation": "breach_recorded",
+      "sworn_at": "2026-04-24T18:30:00Z",
+      "nonce": "0123456789abcdef0123456789abcdef",
+      "sig": {
+        "alg": "bip322",
+        "pubkey": "bc1p5e6v9v2j5wp3y6c79gaqdqltq7jdv45fswnnm7exmmp2020mqepsmcx06p",
+        "value": "AUHpVlFDaiGQUGzbSGuZqzJ+jyx6k05IwC8BLo2Z1ya8ga8e1t3B5T05YnRKH2o4Ckne4IYWYC8S/fV28pX9KlUqAQ=="
+      }
+    }
+  },
+  "signature_check": {
+    "address_type": "p2tr",
+    "format": "bip322-simple",
+    "signed_message": "477e7ede7d22fc99131e40b0ed6699cda40efb14d7aac77b331ffcd725607eec",
+    "expected": {
+      "outcome": "ACCEPT"
+    }
+  }
+}

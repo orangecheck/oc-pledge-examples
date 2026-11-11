@@ -1,0 +1,20 @@
+[
+    {
+        "height": 919000,
+        "now": "2026-04-25T00:00:00Z",
+        "state": "pending",
+        "from": "v23-state-pending: the same pledge sworn by another address, at the same height and time. Block 920000 is not mined yet."
+    },
+    {
+        "height": 920000,
+        "now": "2026-04-25T00:00:00Z",
+        "state": "resolvable",
+        "from": "v23's time, with block 920000 mined (v24-state-resolvable's rule: past resolves_at, before expires_at, no outcome)."
+    },
+    {
+        "height": 920000,
+        "now": "2027-01-01T00:00:00Z",
+        "state": "expired_unresolved",
+        "from": "v25-state-kept's time, with no outcome (v27-state-expired-unresolved's rule: past expires_at, no outcome)."
+    }
+]
